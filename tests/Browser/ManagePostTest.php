@@ -43,4 +43,23 @@ class ManagePostTest extends DuskTestCase
                 ->assertSee('Test Create Post');
         });
     }
+
+    public function testEditPost()
+    {
+        $post = Post::factory()->create();
+
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->visitRoute('post.edit', $post->id)
+                ->assertSee('EDIT POST')
+                ->assertPathIs('/post/'. $post->id.'/edit')
+                ->waitFor('#cke_content')
+                ->type('title', 'Test Update Post')
+                ->select('status', 1)
+                ->script('CKEDITOR.instances.content.setData( "test update content post" );');
+
+            $browser->press('UPDATE')
+                ->assertPathIs('/post')
+                ->assertSee('Test Update Post');
+        });
+    }
 }

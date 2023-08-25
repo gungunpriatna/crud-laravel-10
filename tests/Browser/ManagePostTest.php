@@ -10,9 +10,9 @@ use Tests\DuskTestCase;
 class ManagePostTest extends DuskTestCase
 {
     /**
-     * A Dusk test example.
+     * test view post
      */
-    public function user_can_browse_data(): void
+    public function testViewPosts(): void
     {
         // generate posts
         Post::factory()->count(5)->create();
@@ -23,6 +23,24 @@ class ManagePostTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/post')
                     ->assertSee('post 1');
+        });
+    }
+
+    public function testCreatePost(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/post')
+                ->clickLink('Create New Post')
+                ->assertSee('CREATE NEW POST')
+                ->assertPathIs('/post/create')
+                ->waitFor('#cke_content')
+                ->type('title', 'Test Create Post')
+                ->select('status', 1)
+                ->script('CKEDITOR.instances.content.setData( "test content post" );');
+
+                $browser->press('SAVE')
+                ->assertPathIs('/post')
+                ->assertSee('Test Create Post');
         });
     }
 }

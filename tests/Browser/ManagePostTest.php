@@ -62,4 +62,19 @@ class ManagePostTest extends DuskTestCase
                 ->assertSee('Test Update Post');
         });
     }
+
+    public function testDeletePost()
+    {
+        $post = Post::factory()->create();
+
+
+        $this->browse(function (Browser $browser) use ($post) {
+
+            $browser->visit('/post')
+                ->press('DELETE')
+                ->acceptDialog()
+                ->assertPathIs('/post')
+                ->assertSee('Post deleted successfully.');
+        });
+    }
 }
